@@ -1,0 +1,35 @@
+name: Build SmartBetAI Demo
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Obtener código
+      uses: actions/checkout@v4
+
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Compilar ejecutable
+      run: |
+        pyinstaller --onefile --windowed main.py --add-data "assets;assets"
+
+    - name: Subir artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: SmartBetAI_Demo
+        path: dist/main.exe
